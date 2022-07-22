@@ -32,7 +32,7 @@ class CustomTextField extends StatelessWidget {
           keyboardType: textInputType,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please check that you\'ve entered group email';
+              return 'Please enter weight';
             }
             return null;
           },
