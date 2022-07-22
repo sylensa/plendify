@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:plendify/database/database.dart';
 import 'package:plendify/controller/authentication/firebase_auth.dart';
 import 'package:plendify/helper/hide.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +13,6 @@ import 'package:plendify/model/authentication/user_model.dart';
 import 'package:plendify/model/weight/weighted_tracker_model.dart';
 import 'package:plendify/view/authentication/log_in.dart';
 import 'package:recase/recase.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final FirebaseAuthService firebaseAuthService = FirebaseAuthService();
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -80,99 +78,7 @@ const Color kSecondaryTextColor = Color(0xFF707070);
 const Color kAccessmentContainerColor = Color(0xFFEFEFEF);
 const Color kAccessmentButtonColor = Color(0xFF00C9B9);
 
-displayImage(imagePath, {double radius = 30.0, double? height, double? width}) {
-  return CachedNetworkImage(
-      imageUrl: imagePath,
-      height: height,
-      width: width,
-      placeholder: (context, url) {
-        return radius > 0
-            ? CircleAvatar(
-                backgroundColor: Colors.white,
-                backgroundImage: AssetImage('assets/images/none.png'),
-                radius: radius,
-              )
-            : const Image(
-                image: AssetImage('assets/images/none.png'),
-              );
-      },
-      errorWidget: (context, url, error) {
-        return radius > 0
-            ? CircleAvatar(
-                backgroundColor: Colors.grey,
-                backgroundImage: AssetImage('assets/images/none.png'),
-                radius: radius,
-              )
-            : const Image(
-                image: AssetImage('assets/images/none.png'),
-              );
-      },
-      imageBuilder: (context, image) {
-        return radius > 0
-            ? CircleAvatar(
-                backgroundColor: Colors.white,
-                backgroundImage: image,
-                radius: radius,
-              )
-            : Image(
-                image: image,
-                fit: BoxFit.cover,
-              );
-      });
-}
 
-Widget displaySQImage(imagePath,
-    {double radius = 30.0, double height = 0, double width = 0}) {
-  return CachedNetworkImage(
-      imageUrl: imagePath,
-      placeholder: (context, url) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(radius),
-          clipBehavior: Clip.hardEdge,
-          child: Container(
-            color: solonGray200,
-            width: width,
-            height: height,
-          ),
-        );
-      },
-      errorWidget: (context, url, error) => ClipRRect(
-            borderRadius: BorderRadius.circular(radius),
-            clipBehavior: Clip.hardEdge,
-            child: Container(
-              color: solonGray200,
-              width: height,
-              height: height,
-            ),
-          ),
-      imageBuilder: (context, image) {
-        return ClipRRect(
-            borderRadius: BorderRadius.circular(radius),
-            child: Image(
-              image: image,
-              fit: BoxFit.cover,
-              height: height,
-              width: width,
-            ));
-      });
-}
-
-Widget displayCircularImage(imagePath, {double radius = 30.0}) {
-  return CachedNetworkImage(
-      imageUrl: imagePath,
-      placeholder: (context, url) {
-        return CircleAvatar(
-          backgroundColor: solonGray200,
-          radius: radius,
-        );
-      },
-      imageBuilder: (context, image) {
-        return CircleAvatar(
-          backgroundImage: image,
-          radius: radius,
-        );
-      });
-}
 
 Widget displayLocalImage(String filePath,
     {double radius = 30.0, double? height, double? width}) {
@@ -638,55 +544,6 @@ List<BoxShadow> appShadow(
         offset: Offset(0, 2.0),
         spreadRadius: spread),
   ];
-}
-
-Future<bool> clearPrefs() async {
-  var sp = await SharedPreferences.getInstance();
-  sp.clear();
-  return true;
-}
-
-Future<bool> setPref(key, value, {type = 'string'}) async {
-  var sp = await SharedPreferences.getInstance();
-  print("Setting $type pref $key to $value...");
-  switch (type) {
-    case 'string':
-      sp.setString(key, value);
-      break;
-    case 'bool':
-      sp.setBool(key, value);
-      break;
-    case 'int':
-      sp.setInt(key, value);
-      break;
-    case 'list':
-      List<String> ls = value;
-      sp.setStringList(key, ls);
-      break;
-  }
-  return true;
-}
-
-Future<dynamic> getPref(key, {type = 'string'}) async {
-  var sp = await SharedPreferences.getInstance();
-  switch (type) {
-    case 'string':
-      return sp.getString(key);
-      break;
-    case 'bool':
-      return sp.getBool(key);
-      break;
-    case 'list':
-      List<String> aList = [];
-      List<String>? data = sp.getStringList(key);
-      if (data != null) {
-        aList = data;
-        return aList;
-      } else {
-        return aList;
-      }
-      break;
-  }
 }
 
 EdgeInsets topPadding(double size) {
