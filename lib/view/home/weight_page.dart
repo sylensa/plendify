@@ -42,6 +42,9 @@ class _MainHomePageState extends State<MainHomePage> {
       print(e.toString());
     }
   }
+
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState(){
     super.initState();
@@ -81,39 +84,47 @@ class _MainHomePageState extends State<MainHomePage> {
                 ),
                 sText(userDataModel!.uid,size: 17,weight: FontWeight.w600,color: kAccessmentButtonColor),
                 const SizedBox(height: 20.5),
-                Row(
-                  children: [
-                    Flexible(
-                      flex: 3,
-                      child: CustomTextField(
-                          title: "",
-                          textInputType: const TextInputType.numberWithOptions(decimal: true),
-                          controller: weightValueController,
-                          hintText: "Enter weight value",
-                          labelText: "Enter weight value",
-                          radius: 0,
-                      ),
-                    ),
-                    SizedBox(width: 10,),
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: ()async{
-                          FocusScope.of(context).unfocus();
-                            saveWeight();
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 12,horizontal: 15),
-                            child: sText("Submit",color: Colors.white),
-
-                          decoration: BoxDecoration(
-                            color: kAccessmentButtonColor,
-                            borderRadius: BorderRadius.circular(10)
-                          ),
+                Form(
+                  key:_formKey ,
+                  child: Row(
+                    children: [
+                      Flexible(
+                        flex: 3,
+                        child: CustomTextField(
+                            title: "",
+                            textInputType: const TextInputType.numberWithOptions(decimal: true),
+                            controller: weightValueController,
+                            hintText: "Enter weight value",
+                            labelText: "Enter weight value",
+                            radius: 0,
                         ),
+                      ),
+                      SizedBox(width: 10,),
+                      Flexible(
+                        flex: 1,
+                        child: GestureDetector(
+                          onTap: ()async{
+                            FocusScope.of(context).unfocus();
+                            if (_formKey.currentState!.validate() == false){
+                              return ;
+                            }else{
+                              saveWeight();
+                            }
+
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 12,horizontal: 15),
+                              child: sText("Submit",color: Colors.white),
+
+                            decoration: BoxDecoration(
+                              color: kAccessmentButtonColor,
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                          ),
+                        )
                       )
-                    )
-                  ],
+                    ],
+                  ),
                 ),
                 const WeightListData()
 
