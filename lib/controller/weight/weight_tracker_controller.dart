@@ -1,4 +1,5 @@
 import 'package:plendify/database/database.dart';
+import 'package:plendify/helper/helper.dart';
 import 'package:plendify/model/weight/weighted_tracker_model.dart';
 
 class WeightTrackerController{
@@ -8,7 +9,8 @@ class WeightTrackerController{
 
  Future<List<WeightedTrackerModel>> saveWeightValue(String weightValue)async{
     List<WeightedTrackerModel> listCurrentWeight = [];
-    try{
+    if(weightValue.isNotEmpty){
+      try{
         WeightedTrackerModel weightedTrackerModel = WeightedTrackerModel(
           weight: double.parse(weightValue),
           timestamp: DateTime.now().toString(),
@@ -17,10 +19,15 @@ class WeightTrackerController{
         await DatabaseService(documentId:documentId).updateUserWeight(weightedTrackerModel );
         listCurrentWeight.add(weightedTrackerModel);
         return listCurrentWeight;
-    }catch(e){
-      print(e.toString());
-     return listCurrentWeight;
+      }catch(e){
+        print(e.toString());
+        return listCurrentWeight;
+      }
+    }else{
+      toastMessage("Weight value is empty");
+      return listCurrentWeight;
     }
+
   }
  Future<WeightedTrackerModel?> updateWeightValue(WeightedTrackerModel? weightedTrackerModel)async{
     try{
