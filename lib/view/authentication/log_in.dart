@@ -2,6 +2,7 @@ import 'package:plendify/helper/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:plendify/model/authentication/user_model.dart';
 import 'package:plendify/view/home/weight_page.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 
 
@@ -14,21 +15,27 @@ class LogInPage extends StatefulWidget {
 
 class _LogInPageState extends State<LogInPage> {
   bool progressCode = true;
-
   loginUser()async{
     showLoaderDialog(context,message: "Login in...");
-    UserModel? userModel = await firebaseAuthService.signInSilently();
-    if(userModel != null){
-      print(userModel);
-      userDataModel = userModel;
-      Navigator.pop(context);
-      toastMessage("Login Successfully");
-      goTo(context, MainHomePage(),replace: true);
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      UserModel? userModel = await firebaseAuthService.signInSilently();
+      if(userModel != null){
+        print(userModel);
+        userDataModel = userModel;
+        Navigator.pop(context);
+        toastMessage("Login Successfully");
+        goTo(context, MainHomePage(),replace: true);
+      }else{
+        Navigator.pop(context);
+        toastMessage("Login Failed, try again");
+        print("Login failed");
+      }
     }else{
       Navigator.pop(context);
-      toastMessage("Login Failed, try again");
-      print("Login failed");
+      toastMessage("No internet connection, try again");
     }
+
   }
   @override
   void initState(){
@@ -69,8 +76,8 @@ class _LogInPageState extends State<LogInPage> {
                     height: 76,
                   ),
                   InkWell(
-                    onTap: () {
-                      loginUser();
+                    onTap: () async{
+                      await loginUser();
                     },
                     child: Material(
                       borderRadius: BorderRadius.circular(35),
